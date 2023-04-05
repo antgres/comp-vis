@@ -1,0 +1,113 @@
+\RequirePackage[hyphens]{url} %Brechen von urls nach spiegelstrichen
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[left= 2.5cm, right = 2.5cm, bottom = 4cm]{geometry}
+
+\usepackage[british]{babel} % ngerman
+\usepackage[scaled]{helvet} % use helvetica font
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{float} %big H
+
+\usepackage[pdfusetitle]{hyperref}
+\hypersetup{ %https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Customization
+    colorlinks = false, 
+    hidelinks,
+    breaklinks, %line breaking in a long hyperlink
+    urlcolor=green, % farbe von \url
+    linkcolor =green, %Farbe von \ref
+    citecolor =green, %Farbe von \cite
+    linktoc = all %set to all if you want both sections and subsections linked
+}
+
+%Graphikpaket mit Datenpfad
+\usepackage{graphicx}
+\graphicspath{ {image/} }
+\usepackage{caption} %https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions
+\usepackage{subcaption} %mehrere Bilder mit Untercaptions
+\usepackage{wrapfig}
+
+%Literaturverzeichnis
+\usepackage{csquotes}
+\usepackage{comment}
+\usepackage[ 
+% https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex#Reference_guide
+% https://www.overleaf.com/learn/latex/Natbib_citation_styles
+% https://www.bibtex.com/e/entry-types/
+    backend=biber, % biber backend
+    natbib=true, % customising citations
+    % sorting=nty, % sort name, title, year
+    style=numeric % https://de.overleaf.com/learn/latex/Biblatex_bibliography_styles
+]{biblatex}
+\addbibresource{references.bib}
+
+%Nicht einrücken nach Absatz
+\setlength{\parindent}{0pt}
+
+% Set global margin for indents
+\usepackage{enumitem}
+\setlist{leftmargin=1cm}
+
+%%Zeilenabstand
+\usepackage[onehalfspacing]{setspace} %singlespacing. onehalf-, double-
+
+%% zusätzliche Schriftzeichen der American Mathematical Society
+\usepackage{amsfonts}
+\usepackage{amsmath, bm}
+\usepackage{amssymb}
+\usepackage{commath}
+
+\usepackage{lipsum}
+
+%% setting up special constellation of images
+% https://tex.stackexchange.com/questions/515311/how-do-i-position-3-images-on-a-1-big-image-left-two-small-one-on-top-of-the-ot
+\newlength{\subcolumnwidth}
+\newenvironment{subcolumns}[1][0.45\columnwidth]
+ {\valign\bgroup\hsize=#1\setlength{\subcolumnwidth}{\hsize}\vfil##\vfil\cr}
+ {\crcr\egroup}
+\newcommand{\nextsubcolumn}[1][]{%
+  \cr\noalign{\hfill}
+  \if\relax\detokenize{#1}\relax\else\hsize=#1\setlength{\subcolumnwidth}{\hsize}\fi}
+\newcommand{\nextsubfigure}{\vfill}
+
+% Custom Macro - set custom titel in toc, set hyperref to titel and print titel
+\newcommand{\newsubsection}[1]{
+    \addtocounter{subsection}{1}
+    \phantomsection % new anchor for hyperref, before \addcontentsline
+    \addcontentsline{toc}{subsection}{\protect\numberline{\thesubsection}Recording of #1}
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{\large Recording of #1}
+    \end{itemize}
+}
+
+% ============= First Page edits =============
+\title{Computer Vision Projects: \\
+Depth Information}
+\author{Anton Gres}
+\date{7th Juli 2021}
+
+% needed to set font correctly for the whole document 
+\renewcommand\familydefault{\sfdefault} 
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty} %erzwingen von leerer Nummerierung
+
+\vspace{1cm}
+
+\tableofcontents %Inhaltsverzeichnis
+\newpage
+
+%\listoffigures %Abbildungsverzeichnis
+%\newpage
+
+\include{1_goal}
+\include{2_0_implement}
+\input{3_test}
+
+\sloppy %Latex soll nicht so viel Sand in der Vagina haben
+\printbibliography[heading=bibintoc] % , title={Literaturverzeichnis}
+\fussy  %Latex soll wieder genau soviel Sand in der Vagina haben
+
+\end{document}

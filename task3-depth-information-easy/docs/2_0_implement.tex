@@ -1,0 +1,73 @@
+\section{Implementation}\label{implement}
+
+The following chapter describes the implementation of the project. Figure \ref{fig:pipeline} shows the pipeline of the application.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{image/2/pipeline.pdf}
+    \caption{Pipeline}
+    \label{fig:pipeline}
+\end{figure}
+The pipeline consists of two components: The camera calibration and the manual calculation of the estimated distance. Since a segmentation or a mask from the checkerboard would be necessary to automatically calculate the estimated distance, the creation of the boundary points and the calculation of the estimated distance is done manually.\\
+
+This pipeline will be demonstrated on the basis of figure \ref{fig:250_ref_og} in recording \textit{'250\_cm\_distance.h264'}, where the distance to the object is known to be 250cm.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{image/2/250_ref_og.png}
+    \caption{Original frame from the source recording}
+    \label{fig:250_ref_og}
+\end{figure}
+
+\newpage
+\vspace{-2em}
+\subsection{Intrinsic Matrix}
+
+The algorithm starts to read in all frames from a recording. If the frames of the recording can be accessed, they are processed successively to find the interior corners of the checkerboard in the frames with a specified corner size. A preprocessing step is taken beforehand which downscales the original 1920x1080 frame to a smaller resolution to cutoff processing time. If a checkerboard is found, this frame is saved separately.\\
+
+In this step, however, the intrinsic matrix is not calculated. Only images where the checkerboard was successfully found with a specified corner size are saved. It is necessary to sort the images to avoid duplicates and non-unique images before the intrinsic matrix is calculated.\\
+
+One possibility would be to calculate the intrinsic matrix with all frames where a checkerboard with known corner size was successfully found. However, this has the consequence that the calculation of the intrinsic matrix takes more processing time. Furthermore there is no merit in using images where no new or unique information about the image appears. Therefore the number of images for the calibration should be as small as possible with as much unique information as possible.\\
+That is why in this project the images are sorted manually. It is recommended to use at least "10 images of a 7 × 8 or larger chessboard" \cite{cv} to obtain high-quality results \cite{cv}\\
+
+The selection of the images that form the basis of the calibration of the intrinsic matrix is particularly crucial. Depending on which images are used, they can strongly influence the coefficients of the intrinsic matrix and thus the estimated distance. This poses a potential danger.\\ % corner size
+
+After the best images have been selected from the set of frames, they can now be used to calculate the intrinsic matrix and distortion coefficients. For this purpose, the methodology in \cite{zhang2000} will be used. Additionally the distortion matrix needs to be calculated too. The methodology for this is described in \cite{brown} and \cite{brown_2}. \cite{cv}\\
+When both sets of coefficients are acquired the distorted image can be undistorted. For this purpose, the methodology described in \cite{distort_cv} is used.\\
+
+% Enforce Text on same page (no page break)
+\begin{minipage}{\textwidth}
+To further improve the coefficients of the intrinsic matrix, the undistorted images can be undistorted again.
+\end{minipage}
+
+\newpage
+\input{2_2_distance_estimation}
+
+
+\subsection{Printer size estimation}
+
+\begin{wrapfigure}[15]{L}{0.5\textwidth}
+    \vspace{-.75\baselineskip}
+    \centering
+     \captionsetup{justification=centering}
+     \begin{minipage}[b]{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{image/2/metal_printer_size.png}
+         \caption{Marked pixel coordinates}
+         \label{fig:printer_size}\par
+     \end{minipage}
+\end{wrapfigure}
+
+Furthermore, we can measure the size of objects at the same distance as a reference object. In this project, the width and height of the 3D metal printer is to be determined. This can be seen in figure \ref{fig:printer_size}.\\
+
+For this purpose the boundary points with pixel coordinates $(z_1, z_2)^{T}$ of the known reference object are marked, just like the corner points of the searched for object. In this example the boundary of the checkerboard are marked with green points and the corner points of the 3D metal printer are marked with red points.
+
+\newpage
+The boundary points of the checkerboard should lie on the edge of the checkerboard and on a straight line as that is where the known distance $d(A, B)$ lies. Since the checkerboard has edges of equal length, we can assume the same distance for the height as for the width. Therefore only two boundary points are needed.\\ 
+
+With the pixel coordinates $\bm{A, B, P_1, P_2, P_3}$ one can now calculate the size of the 3D metal printer. For this purpose, the ratio of the norm between two points and the norm between the boundary points is calculated and scaled with the reference distance.
+
+\begin{align}
+    width &= \frac{|\bm{P1}-\bm{P2}|}{|\bm{A}-\bm{B}|}\cdot d(A, B)\label{eq5}\\[10pt]
+    height &= \frac{|\bm{P2}-\bm{P3}|}{|\bm{A}-\bm{B}|}\cdot d(A, B)\label{eq6}
+\end{align}

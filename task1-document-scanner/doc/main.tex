@@ -1,0 +1,86 @@
+\RequirePackage[hyphens]{url} %Brechen von urls nach spiegelstrichen
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[left= 2.5cm, right = 2.5cm, bottom = 4cm]{geometry}
+
+\usepackage[british]{babel} % ngerman
+\usepackage[scaled]{helvet} % use helvetica font
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{float} %big H
+
+\usepackage[pdfusetitle]{hyperref}
+\hypersetup{ %https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Customization
+    colorlinks = false, 
+    hidelinks,
+    breaklinks, %line breaking in a long hyperlink
+    urlcolor=green, % farbe von \url
+    linkcolor =green, %Farbe von \ref
+    citecolor =green %Farbe von \cite
+}
+
+%Graphikpaket mit Datenpfad
+\usepackage{graphicx}
+\graphicspath{ {image/} }
+\usepackage{caption} %https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions
+\usepackage{subcaption} %mehrere Bilder mit Untercaptions
+\usepackage{wrapfig}
+
+%Literaturverzeichnis
+\usepackage{csquotes}
+\usepackage{comment}
+\usepackage[ % https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex#Reference_guide
+    backend=biber, % biber backend
+    natbib=true, % customising citations
+    % sorting=nty, % sort name, title, year
+    style=numeric % alphabetic, numeric
+]{biblatex}
+\addbibresource{references.bib}
+
+%Nicht einrücken nach Absatz
+\setlength{\parindent}{0pt}
+
+% Set global margin for indents
+\usepackage{enumitem}
+\setlist{leftmargin=1cm}
+
+%%Zeilenabstand
+\usepackage[onehalfspacing]{setspace} %singlespacing. onehalf-, double-
+
+%% zusätzliche Schriftzeichen der American Mathematical Society
+\usepackage{amsfonts}
+\usepackage{amsmath, bm}
+\usepackage{amssymb}
+
+% ============= First Page edits =============
+\title{Computer Vision Projects: \\
+Document Scanner}
+\author{Anton Gres}
+
+\date{3rd Mai 2021}
+
+% needed to set font correctly for the whole document 
+\renewcommand\familydefault{\sfdefault} 
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty} %erzwingen von leerer Nummerierung
+
+\vspace{1cm}
+
+\tableofcontents %Inhaltsverzeichnis
+\newpage
+
+%\listoffigures %Abbildungsverzeichnis
+%\newpage
+
+\include{1_goal}
+\include{3_implement}
+\include{4_test}
+
+\sloppy %Latex soll nicht so viel Sand in der Vagina haben
+\printbibliography[heading=bibintoc] % , title={Literaturverzeichnis}
+\fussy  %Latex soll wieder genau soviel Sand in der Vagina haben
+
+\end{document}
